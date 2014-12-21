@@ -1,0 +1,109 @@
+{
+	"year":2015,
+	"due":1440608400,
+	"toptext":"",
+	"administrators":[
+		"lucasem",
+		"jorloff"
+	],
+	"registerclasses":1441608400,
+	"subjects": {
+		"Biology": {
+			"fields": [
+				["7012", "ES.7012"],
+				["nobio", "No biology in ESG"]
+			],
+			"id":"esgbioradio"
+		},
+		"Chemistry": {
+			"fields": [
+				["5112", "ES.5112"],
+				["nochem", "No chemistry in ESG"]
+			],
+			"id":"esgchemradio"
+		},
+		"Physics": {
+			"fields": [
+				["801", "ES.801"],
+				["8012", "ES.8012"],
+				["8022", "ES.8022"],
+				["nophys", "No physics in ESG"]
+			],
+			"id":"esgphysradio"
+		},
+		"Math": {
+			"fields": [
+				["1801", "ES.1801"],
+				["1801A", "ES.181A/ES.182A"],
+				["1802", "ES.1802"],
+				["1803", "ES.1803"],
+				["nomath", "No math in ESG"]
+			],
+			"id":"esgmathradio"
+		},
+		"HASS/CI-HW": {
+			"fields":[
+				["729", "ES.729*"],
+				["nohass", "No HASS in ESG"]
+			],
+			"id":"esghassradio"
+		},
+		"Special Topics Seminar": {
+			"fields": [
+				["S10", "ES.S10**"],
+				["S11", "ES.S11***"],
+				["nospecial", "No special topic"]
+			],
+			"id":"esgspecialtopicsradio"
+		}
+	},
+	"aftersubjects":["Short Answers"],
+	"questions": [
+		["Demographics", {
+			"text":"",
+			"fields":[
+				["text", "mitid", "MIT ID"],
+				["textarea", "termaddress", "Term Address", "rows=4, cols=80", ""],
+				["textarea", "homeaddress", "Home Address", "rows=4, cols=80", ""],
+				["text", "localphone", "Cell (or local) phone"],
+				["text", "birthday", "Birthday (month/day/year)"]
+			]
+		}],
+		["Permissions", {
+			"text":"With your permission we would like share some of your information with the ESG community:",
+			"fields":[
+				["radio", "listbirthday", "Is it ok to list your birthday (without the year) on our ESG birthday list?",[
+					["yes", "Yes"],
+					["no", "No"]
+				]],
+				["radio", "includepicture", "ESG would like to post pictures of our students on a bulletin board and also to print a book of these pictures for use within ESG.  Please let us know if you would be willing to have your picture included.", [
+					["yes","Yes, you may include my picture in the book and bulletin board."],
+					["no","No, I'd prefer that my picture not be included in the book and bulletin board."]
+				]]
+			]
+		}],
+		["Advising", {
+			"text":"",
+			"fields":[
+				["text", "rcadvisor", "Regular curriculum advisor"],
+				["radio", "advising", "Which type of advising group are you in?",[
+					["esgadvising", "Advisor in ESG"],
+					["freshmanadvisingseminar","Freshman advising seminar"],
+					["traditionaladvising","Traditional advising"],
+					["interphaseadvising","Interphase advising"]
+				]],
+				["textarea", "interests", "Interests: ", "rows=8, cols=80", "<p class='help-block'>Please put a * next to those you'd like to have in common with your ESG advisor</p>"]
+			]
+		}],
+		["Short Answers", {
+			"text":"We find it really useful and interesting to hear what you have to say. Since admission is lottery based this will not affect whether or not you get in to ESG.",
+			"fields":[
+				["textarea", "whyesgtext", "Why would you like to join ESG? What influenced you the most to consider joining?", "rows=8, cols=80",""],
+				["textarea", "howdidyourhearofesg", "How did you first hear about ESG?", "rows=8, cols=80",""],
+				["textarea", "whathaveyouheard", "What things have you heard about ESG and from whom (names optional)?", "rows=8, cols=80",""],
+				["textarea", "bestlearningexperience", "What has been your best learning experience before coming to MIT and why?", "rows=8, cols=80",""],
+				["textarea", "othercomments", "Are there any other comments you'd like to share with us about ESG or MIT at this point?", "rows=8, cols=80",""]
+			]
+		}]
+	]
+}
