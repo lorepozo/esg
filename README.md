@@ -1,5 +1,9 @@
 #ESG Application
 
+View this code live:
+  1. [admin.php](http://lucasem.scripts.mit.edu/esg/admin.php)
+  2. [app.php](http://lucasem.scripts.mit.edu/esg/app.php)
+
 - `admin.php`
   * This is the interface for administrators. It allows the creation of a new application and the updating of kerberii, neither of which can be done otherwise.
   * The changelog and associated records are viewed through this.
