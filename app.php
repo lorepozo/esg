@@ -9,6 +9,33 @@ include 'app_util.php';
 <?php handle_post($_POST)?>
 <head><title>ESG Application</title>
 	<link rel="stylesheet" href="resources/bootstrap.min.css">
+  <script>
+	window.URL = window.URL || window.webkitURL;
+	function preview(o) {
+		var i = new Image(),
+			url = o.file?o.file:window.URL.createObjectURL(o.files[0]),
+			p = document.createElement("img"),
+			prev = document.getElementById(o.id);
+		i.onload = function() {
+			p.src = url,
+			p.height = 120,
+			p.style.border="1px solid black",
+			prev.innerHTML='';
+			prev.appendChild(p);
+		}
+		i.src = url;
+	}
+  function register_image(id, loc){
+    document.getElementById(id+'_btn').addEventListener("click", function(e){
+      e.preventDefault();
+      form[id].click();
+    }, false);
+    loc && preview({
+      id: id+"_prev",
+      file: loc
+    });
+  }
+  </script>
 </head>
 <?php 
 init_user();
@@ -66,12 +93,12 @@ if (!isset($user)) {?>
 	<p>
 	<hr>
 	<?php echo $esg["toptext"]?>
-	<form role="form" name="form" id="form" method="post">
+	<form role="form" name="form" id="form" method="post" enctype="multipart/form-data">
 	  <input type="hidden" name="saveorsubmit">
 	  <input type="hidden" name="id" value="<?php echo $id?>">
     <!-- TODO: Ask Jeremy about "cat" category thing -->
     
-		<?php 
+		<?php
     if (!isset($user["kerb"])) { ?>
       <div class="form-group">
         <label>Email: </label>
@@ -81,12 +108,12 @@ if (!isset($user)) {?>
     <?php }
 		foreach ($esg["questions"] as $category){
 			if (in_array($category[0], $esg["aftersubjects"])) {continue;}
-			category_print($category);
+			category_print($category, $user);
 		}
     include 'app_subjects.php';
 		foreach($esg["questions"] as $category){
 			if (in_array($category[0], $esg["aftersubjects"])){
-				category_print($category);
+				category_print($category, $user);
 				break;
 			}
 		}

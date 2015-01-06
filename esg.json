@@ -6,6 +6,11 @@
 		"lucasem",
 		"jorloff"
 	],
+    "staff":[
+        "lucasem",
+        "jorloff",
+        "ramsay"
+    ],
 	"registerclasses":1441608400,
 	"subjects": {
 		"Biology": {
@@ -79,7 +84,8 @@
 				["radio", "includepicture", "ESG would like to post pictures of our students on a bulletin board and also to print a book of these pictures for use within ESG.  Please let us know if you would be willing to have your picture included.", [
 					["yes","Yes, you may include my picture in the book and bulletin board."],
 					["no","No, I'd prefer that my picture not be included in the book and bulletin board."]
-				]]
+				]],
+                ["image", "photo", "Picture of You"]
 			]
 		}],
 		["Advising", {

@@ -1,7 +1,8 @@
 {
-   "bW9yYWxlc19sdWNhcw":{
+   "bHVjYXNlbUBtaXQuZWR1":{
       "first":"Lucas",
       "last":"Morales",
+      "email":"lucasem@mit.edu",
       "kerb":"lucasem",
       "mitid":"919672869",
       "termaddress":"518 Beacon St\r\nBoston, MA 02215",
@@ -20,10 +21,5 @@
       "esghassradio":"nohass",
       "esgspecialtopicsradio":"nospecial",
       "rcsubjects":"all of them"
-   },
-   "b3Jsb2ZmX2plcmVteQ":{
-      "first":"Jeremy",
-      "last":"Orloff",
-      "kerb":"jorloff"
    }
 }

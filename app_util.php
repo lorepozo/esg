@@ -14,8 +14,27 @@ function handle_post($p) {
 		$users = json_decode(file_get_contents('users.json'),true);
 		$id = $p["id"];
     $d = [];
+		if ($_FILES) {
+      foreach ($_FILES as $key => $image) {
+        if (!($image["error"] > 0) and ($image["size"] > 0) and exif_imagetype($image["tmp_name"])) {
+    			$imageloc = "images/".$key."_".$id.".".pathinfo($image["name"],PATHINFO_EXTENSION);
+    			move_uploaded_file($image["tmp_name"], $imageloc);
+          $d[$key] = $imageloc;
+          $users[$id][$key] = $imageloc;
+        }
+      }
+		}
+    $exclude = ['id','saveorsubmit'];
+    $esg = json_decode(file_get_contents('esg.json'),true);
+    foreach ($esg["questions"] as $category) {
+      foreach ($category[1]["fields"] as $question) {
+        if ($question[0] == 'image') {
+          array_push($exclude, $question[1]);
+        }
+      }
+    }
 		foreach ($p as $key => $value) {
-			if (($key == 'id') or ($key == 'saveorsubmit')) {
+			if (in_array($key, $exclude)) {
 				continue;
 			}
       if ($users[$id][$key] != $value) {
@@ -24,13 +43,10 @@ function handle_post($p) {
       }
 		}
     $jsonstring = json_encode($users);
-    $timestamp = date("Y-m-d-G-i-s");
-    $delta = str_replace(",", ";COMMA;", json_encode($d));
-    $change = sprintf("\n%s,%s,%s %s (%s),%s", $timestamp, $s, $users[$id]["first"], $users[$id]["last"], $id, $delta);
-    file_put_contents('changelog.csv', $change, FILE_APPEND | LOCK_EX);
-		file_put_contents('users.json', $jsonstring, LOCK_EX);
-    file_put_contents('records/'.$timestamp.'.json', $jsonstring); ?>
-	  <div class="alert alert-success" role="alert">Your response has been <?php echo $sd?>!</div>
+    $delta = json_encode($d);
+    include("admin_util.php");
+    db_write($delta, $s, $users[$id]["first"], $users[$id]["last"], $id, $jsonstring); ?>
+	  <div class="alert alert-success" role="alert"><?php echo $msg ?> Your response has been <?php echo $sd?>!</div>
 	<?php }
   
   return $users[$id];
@@ -61,12 +77,12 @@ function init_user() {
   }
 }
 
-function category_print($category) {?>
+function category_print($category, $user) {?>
 	<h2><?php echo $category[0]?></h2><p>
 	<?php if ($category[1]["text"]) { ?>
 		<p><?php echo $category[1]["text"]?></p>
 	<?php }
-  foreach ($category[1]["fields"] as $question) {?>
+  foreach ($category[1]["fields"] as $question) { ?>
 		<div class="form-group">
 		<label><?php echo $question[2]?></label><br>
     <?php switch ($question[0]) {
@@ -82,8 +98,17 @@ function category_print($category) {?>
 					<label class="radio-inline"><input type="radio" name="<?php echo $question[1]?>" value="<?php echo $radio[0]?>"><?php echo $radio[1]?></label><br>
 				<?php }
 				break;
+      case "image": ?>
+      	<button class="btn btn-primary" id='<?php echo $question[1] ?>_btn'>Upload Image</button>
+      	<div id='<?php echo $question[1] ?>_prev' style='margin:10px 5px'></div>
+      	<input size=30 type="file" name='<?php echo $question[1] ?>' style="display:none"
+          onchange="preview({id:'<?php echo $question[1] ?>_prev',files:this.files})" accept="image/*">
+        <?php
+        $param2 = ($user[$question[1]]) ? "'".$user[$question[1]]."'" : "undefined";
+        ?><script>register_image('<?php echo $question[1] ?>', <?php echo $param2 ?>)</script>
+        <?php
+        break;
   	}?>
-		</label>
 	  </div>
 	<?php }?>
 	<hr>
