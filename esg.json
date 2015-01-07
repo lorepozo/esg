@@ -1,12 +1,27 @@
 {
 	"year":2015,
-	"due":1440608400,
+	"due": {
+        "summer": {
+            "part_a": 1436600000,
+            "part_b": 1437600000
+        },
+        "fall": {
+            "part_a": 1441008400,
+            "part_b": 1442008400
+        }
+	},
+    "required": {
+        "part_a": ["mitid", "listbirthday", "includepicture", "whyesgtext", "howdidyourhearofesg", "whathaveyouheard", "bestlearningexperience", "othercomments"],
+        "part_b": ["termaddress","homeaddress", "interests", "advising", "rcadvisor"]
+    },
 	"toptext":"",
 	"admins":[
 		"lucasem",
 		"jorloff",
         "ramsay"
 	],
+    "apperr": "<h2>Problem with Application</h2><p>We're sorry, but we encountered a problem when trying to serve your application.<p><p><b>Before filling out an application you must do all of the following.</b><br>1. Go to an ESG information session.<br>2. After the session have a staff member enter your name in our database.<br>3. Use the link we emailed to you to access this application.<p>If you have any questions or concerns, please contact us at<a href='mailto:esglizards@mit.edu'>esglizards@mit.edu</a>.",
+    "instructions":"<p>Please answer all the questions in this form and thenclick the <b>submit</b> button at the bottom.<br>If you don't finish you can click the <b>save</b>  button and come back tofinish the form using the same link you already used.</p><p>Please note that admission to ESG is lottery based. Your answers to thesequestions help us learn something about you, but they will notaffect your chances in the lottery.</p>",
     "overview":["photo", "first", "last", "email", "kerb", "id", "created", "saved", "submitted"],
 	"registerclasses":1441608400,
 	"subjects": {
@@ -65,10 +80,12 @@
 			"text":"",
 			"fields":[
 				["text", "mitid", "MIT ID"],
-				["textarea", "termaddress", "Term Address", "rows=4, cols=80", ""],
-				["textarea", "homeaddress", "Home Address", "rows=4, cols=80", ""],
+				["textarea", "termaddress", "Term Address", "4", ""],
+				["textarea", "homeaddress", "Home Address", "4", ""],
 				["text", "localphone", "Cell (or local) phone"],
-				["text", "birthday", "Birthday (month/day/year)"]
+				["text", "birthday", "Birthday (month/day/year)"],
+                ["text", "nationality", "Nationality"],
+				["textarea", "emergencycontact", "Emergency Contact", "2", ""]
 			]
 		}],
 		["Permissions", {
@@ -95,17 +112,17 @@
 					["traditionaladvising","Traditional advising"],
 					["interphaseadvising","Interphase advising"]
 				]],
-				["textarea", "interests", "Interests: ", "rows=8, cols=80", "<p class='help-block'>Please put a * next to those you'd like to have in common with your ESG advisor</p>"]
+				["textarea", "interests", "Interests: ", "8", "<p class='help-block'>Please put a * next to those you'd like to have in common with your ESG advisor</p>"]
 			]
 		}],
 		["Short Answers", {
 			"text":"We find it really useful and interesting to hear what you have to say. Since admission is lottery based this will not affect whether or not you get in to ESG.",
 			"fields":[
-				["textarea", "whyesgtext", "Why would you like to join ESG? What influenced you the most to consider joining?", "rows=8, cols=80",""],
-				["textarea", "howdidyourhearofesg", "How did you first hear about ESG?", "rows=8, cols=80",""],
-				["textarea", "whathaveyouheard", "What things have you heard about ESG and from whom (names optional)?", "rows=8, cols=80",""],
-				["textarea", "bestlearningexperience", "What has been your best learning experience before coming to MIT and why?", "rows=8, cols=80",""],
-				["textarea", "othercomments", "Are there any other comments you'd like to share with us about ESG or MIT at this point?", "rows=8, cols=80",""]
+				["textarea", "whyesgtext", "Why would you like to join ESG? What influenced you the most to consider joining?", "8",""],
+				["textarea", "howdidyourhearofesg", "How did you first hear about ESG?", "8",""],
+				["textarea", "whathaveyouheard", "What things have you heard about ESG and from whom (names optional)?", "8",""],
+				["textarea", "bestlearningexperience", "What has been your best learning experience before coming to MIT and why?", "8",""],
+				["textarea", "othercomments", "Are there any other comments you'd like to share with us about ESG or MIT at this point?", "8",""]
 			]
 		}]
 	]

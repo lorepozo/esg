@@ -12,8 +12,7 @@
 admin_login($_SERVER);
 
 $esg = json_decode(file_get_contents('esg.json') , true);
-$file = file_get_contents('users.json');
-$users = json_decode($file, true);
+$users = json_decode(file_get_contents('users.json'), true)[$esg["year"]];
 $salt = "";
 
 if ($_GET and isset($_GET["salt"])) {

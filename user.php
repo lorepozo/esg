@@ -15,8 +15,8 @@ if (!isset($_GET) or !isset($_GET["id"])) {
   echo "An id must be provided to get user information</body></html>";
   exit;
 }
-$file = file_get_contents('users.json');
-$users = json_decode($file, true);
+$esg = json_decode(file_get_contents('esg.json'), true);
+$users = json_decode(file_get_contents('users.json'), true)[$esg["year"]];
 $id = $_GET["id"];
 if (!isset($users[$id])) {
   echo "The user does not exist</body></html>";

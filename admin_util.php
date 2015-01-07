@@ -21,7 +21,9 @@ function admin_login($server) {
   return $admin;
 }
 
-function admin_post($user) {
+function admin_post($user, $admin) {
+  $esg = json_decode(file_get_contents('esg.json') , true);
+  $users = json_decode(file_get_contents('users.json'), true)[$esg["year"]];
   if ($user) {
     if ((!isset($user["email"]) or $user["email"] == "") and isset($user["kerb"]) and $user["kerb"] != "") {
       $user["email"] = $user["kerb"]."@mit.edu";
@@ -29,8 +31,7 @@ function admin_post($user) {
     $id = str_replace('=','',base64_encode($user["email"]));
     $user["id"] = $id;
     $user["created"] = time();
-    $file = file_get_contents('users.json');
-    $users = json_decode($file, true);
+    $user["section"] = (time() < $esg["due"]["summer"]["part_a"]) ? "summer" : "fall";
     if (isset($users[$id])) { ?>
       <div class="alert alert-warning">
         A user with that email already exists: 
@@ -44,25 +45,34 @@ function admin_post($user) {
       <?php
     } else {
       $users[$id] = $user;
-      $jsonstring = json_encode($users);
       $user["id"] = $id;
       $delta = json_encode($user);
-      db_write($delta, "admin ".$admin, $user["first"], $user["last"], $id, $jsonstring); ?>
+      db_write($delta, "admin ".$admin, $user["first"], $user["last"], $id, $esg["year"], $users);
+      // $to = $user["email"];
+      // $subject = "Your MIT Experimental Study Group Application";
+      // $message = "
+      //   <html><head><title>".$subject."</title></head><body>
+      //   Hello, ".$user["first"]."!
+      //
+      //   Thank you for reaching out to us at ESG.
+      //   </body></html>";
+      // $headers = 'From: MIT Experimental Study Group <esglizards@mit.edu>' . "\r\n";
+      // mail($to, $subject, $message, $headers); ?>
       <div class="alert alert-success">
         The user 
         <a href="user.php?id=<?php echo $id ?>"><?php echo $user["first"]." ".$user["last"] ?></a>
-        has been added!
+        has been added <!-- and was sent an email -->!
       </div>
       <?php
     }
-  } else {
-    $file = file_get_contents('users.json');
-    $users = json_decode($file, true);
   }
   return $users;
 }
 
-function db_write($delta, $admin, $first, $last, $id, $jsonstring) {
+function db_write($delta, $admin, $first, $last, $id, $year, $users) {
+  $userfile = json_decode(file_get_contents("users.json"), true);
+  $userfile[$year] = $users;
+  $jsonstring = json_encode($userfile);
   $delta = str_replace(',',';COMMA;',$delta);
   $timestamp = date("Y-m-d-G-i-s");
   $change = sprintf("\n%s,%s,%s %s (%s),%s", $timestamp, $admin, $first, $last, $id, $delta);

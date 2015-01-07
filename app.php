@@ -6,9 +6,12 @@ include 'app_util.php';
 ?>
 <!DOCTYPE html>
 <html>
-<?php handle_post($_POST, $_FILES, $_SERVER)?>
 <head><title>ESG Application</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <style>
+  input.valid, textarea.valid { border: 1px solid green; color: green }
+  input.invalid, button.invalid, textarea.invalid { border: 1px solid red }
+  </style>
   <script>
 	window.URL = window.URL || window.webkitURL;
 	function preview(o) {
@@ -37,26 +40,26 @@ include 'app_util.php';
   }
   </script>
 </head>
+<body>
 <?php 
 init_user();
-if (!isset($user)) {?>
-  <body><div class="container"><h2>Problem with Application</h2>
-  <p>We're sorry, but we encountered a problem when trying to serve your application.<p>
-  <p><b>Before filling out an application you must do all of the following.</b><br>
-  1. Go to an ESG information session.<br>
-  2. After the session have a staff member enter your name in our database.<br>
-  3. Use the link we emailed to you to access this application.
-  <p></div></body>
-<?php exit;
-}?>
+
+if (!isset($user)) {
+  echo "<div class='container'>".$esg["apperr"]."</div></body></html>";
+  exit;
+}
+
+$due = $esg["due"][$user["section"]][((time() < $esg["due"][$user["section"]]["part_a"]) ? "part_a" : "part_b" )];
+
+?>
 <script type="application/json" id="user">
 <?php echo json_encode($user)?>
 </script>
-<body>
+<?php handle_post($_POST, $_FILES, $_SERVER) ?>
 <div class="container">
 	<div><img src="resources/lizardtessellation.png" width="600"></div>
 		<h1>ESG Application Fall <?php echo $esg["year"]?>
-			(due <?php echo date('M j, Y',$esg["due"])?>)</h1>
+			(due <?php echo date('M j, Y', $due)?>)</h1>
 	<p>
 	<?php echo $esg["toptext"]?>
 	<table class="table" cellspacing="0" cellpadding="4" border="0">
@@ -69,6 +72,7 @@ if (!isset($user)) {?>
     <?php } else { ?>
       <td>Please inform <a href="mailto:esglizards@mit.edu">esglizards@mit.edu</a>
         of your kerberos as soon as you get one.</td>
+      </tr><tr><th>Other email</th><td><?php echo $user["email"]?></td>
     <?php } ?>
 	</tr>
 	<tr><th>Application ID:</th>
@@ -78,19 +82,12 @@ if (!isset($user)) {?>
 	<p>
 	<hr>
 	<h2>Instructions</h2>
-	Please answer all the questions in this form and then
-	click the <b>submit</b> button at the bottom.<br>
-	If you don't finish you can click the <b>save</b>  button and come back to
-	finish the form using the same link you already used.
-	<p>
-	Please note that admission to ESG is lottery based. Your answers to these
-	questions help us learn something about you, but they will not
-	affect your chances in the lottery.
-	<p>
-	<b>This application is due no later than <?php echo date('l, F j Y',$esg["due"])?>.</b><br>
+	<?php echo $esg["instructions"] ?>
+  <p>
+	<b>This application is due no later than <?php echo date('l, F j Y', $due) ?>.</b><br>
   If you have any questions or concerns, please contact us at
   <a href="mailto:esglizards@mit.edu">esglizards@mit.edu</a>.
-	<p>
+  </p>
 	<hr>
 	<?php echo $esg["toptext"]?>
 	<form role="form" name="form" id="form" method="post" enctype="multipart/form-data">
@@ -128,11 +125,13 @@ if (!isset($user)) {?>
 </div>
 <script>
 (function(){
-  var user = JSON.parse(document.getElementById('user').innerHTML);
+  var userel = document.getElementById('user'),
+      user = JSON.parse(document.getElementById('user').innerHTML);
   for (key in user) {
   	try {form.elements[key].value=user[key]}
   	catch (e) {/* gotta catch 'em all! */}
   }
+  userel.parentElement.removeChild(userel);
 	window.submitForm = function(dosave){
 	  form.saveorsubmit.value = dosave ? "save" : "submit";
 	  form.submit();

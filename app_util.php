@@ -2,11 +2,11 @@
 
 function handle_post($p, $f, $server) {
 
+  $esg = json_decode(file_get_contents('esg.json') , true);
   if (@$server['SSL_CLIENT_S_DN_CN']) {
-    $esg = json_decode(file_get_contents('esg.json') , true);
     if (in_array(explode("@", $server['SSL_CLIENT_S_DN_Email'])[0], $esg["admins"])) {
       $admin = explode("@", $server['SSL_CLIENT_S_DN_Email'])[0];
-      ?><div class="alert alert-info" role="alert">Any changes you make will be marked as administrator <code><?php echo $admin ?></code></div><?php
+      ?><div class="alert alert-info" role="alert" style="margin:0">Any changes you make will be marked as administrator <code><?php echo $admin ?></code></div><?php
     }
   }
 
@@ -19,7 +19,7 @@ function handle_post($p, $f, $server) {
 	
 	if ($s) {
     global $users, $id;
-		$users = json_decode(file_get_contents('users.json'),true);
+		$users = json_decode(file_get_contents('users.json'),true)[(string)$esg["year"]];
 		$id = $p["id"];
     $d = [];
     if (!isset($admin)) {
@@ -54,13 +54,12 @@ function handle_post($p, $f, $server) {
   			$users[$id][$key] = $value;
       }
 		}
-    $jsonstring = json_encode($users);
     $delta = json_encode($d);
     include("admin_util.php");
     if (isset($admin)) {
       $s = "admin ".$admin;
     }
-    db_write($delta, $s, $users[$id]["first"], $users[$id]["last"], $id, $jsonstring); ?>
+    db_write($delta, $s, $users[$id]["first"], $users[$id]["last"], $id, $esg["year"], $users); ?>
 	  <div class="alert alert-success" role="alert"><?php echo $msg ?> Your response has been <?php echo $sd?>!</div>
 	<?php }
   
@@ -72,10 +71,10 @@ function handle_post($p, $f, $server) {
 function init_user() {
   global $esg, $user, $users, $id;
   $esg = json_decode(file_get_contents('esg.json'),true);
-  if (isset($users)) {
+  if ($users and $id) {
     $user = $users[$id];
   } else {
-    $users = json_decode(file_get_contents('users.json'),true);
+    $users = json_decode(file_get_contents('users.json'),true)[$esg["year"]];
     $id = $_GET["id"];
     if (!isset($id) and @$_SERVER['SSL_CLIENT_S_DN_CN']) {
       $kerb = explode("@", $_SERVER['SSL_CLIENT_S_DN_Email'])[0];
@@ -105,7 +104,7 @@ function category_print($category, $user) {?>
 				<input class="form-control" type="text" name="<?php echo $question[1]?>"><br>
 				<?php	break;
 	  	case "textarea":?>
-			  <textarea class="form-control" name="<?php echo $question[1]?>" <?php echo $question[3]?>></textarea><br>
+			  <textarea class="form-control" name="<?php echo $question[1]?>" rows="<?php echo $question[3]?>"></textarea><br>
 				<?php echo $question[4];
 				break;
 		 	case "radio":
