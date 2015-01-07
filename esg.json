@@ -2,15 +2,12 @@
 	"year":2015,
 	"due":1440608400,
 	"toptext":"",
-	"administrators":[
+	"admins":[
 		"lucasem",
-		"jorloff"
-	],
-    "staff":[
-        "lucasem",
-        "jorloff",
+		"jorloff",
         "ramsay"
-    ],
+	],
+    "overview":["photo", "first", "last", "email", "kerb", "id", "created", "saved", "submitted"],
 	"registerclasses":1441608400,
 	"subjects": {
 		"Biology": {
@@ -85,7 +82,7 @@
 					["yes","Yes, you may include my picture in the book and bulletin board."],
 					["no","No, I'd prefer that my picture not be included in the book and bulletin board."]
 				]],
-                ["image", "photo", "Picture of You"]
+                ["image", "photo", "Picture of You (optional)"]
 			]
 		}],
 		["Advising", {

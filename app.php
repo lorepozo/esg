@@ -6,9 +6,9 @@ include 'app_util.php';
 ?>
 <!DOCTYPE html>
 <html>
-<?php handle_post($_POST)?>
+<?php handle_post($_POST, $_FILES, $_SERVER)?>
 <head><title>ESG Application</title>
-	<link rel="stylesheet" href="resources/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <script>
 	window.URL = window.URL || window.webkitURL;
 	function preview(o) {
@@ -40,13 +40,13 @@ include 'app_util.php';
 <?php 
 init_user();
 if (!isset($user)) {?>
-  <body><h2>Problem with Application</h2>
+  <body><div class="container"><h2>Problem with Application</h2>
   <p>We're sorry, but we encountered a problem when trying to serve your application.<p>
   <p><b>Before filling out an application you must do all of the following.</b><br>
   1. Go to an ESG information session.<br>
   2. After the session have a staff member enter your name in our database.<br>
-  3. Use the link we emailed to you to access this application."
-  <p></body>
+  3. Use the link we emailed to you to access this application.
+  <p></div></body>
 <?php exit;
 }?>
 <script type="application/json" id="user">
@@ -64,7 +64,7 @@ if (!isset($user)) {?>
 		<td><?php echo $user["last"]?>, <?php echo $user["first"]?></td>
 	</tr>
 	<tr><th>MIT email:</th>
-    <?php if (isset($user["kerb"])) { ?>
+    <?php if (isset($user["kerb"]) and $user["kerb"] != "") { ?>
       <td><?php echo $user["kerb"]?>@mit.edu</td>
     <?php } else { ?>
       <td>Please inform <a href="mailto:esglizards@mit.edu">esglizards@mit.edu</a>

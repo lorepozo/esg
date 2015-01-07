@@ -1,6 +1,14 @@
 <?php
 
-function handle_post($p) {
+function handle_post($p, $f, $server) {
+
+  if (@$server['SSL_CLIENT_S_DN_CN']) {
+    $esg = json_decode(file_get_contents('esg.json') , true);
+    if (in_array(explode("@", $server['SSL_CLIENT_S_DN_Email'])[0], $esg["admins"])) {
+      $admin = explode("@", $server['SSL_CLIENT_S_DN_Email'])[0];
+      ?><div class="alert alert-info" role="alert">Any changes you make will be marked as administrator <code><?php echo $admin ?></code></div><?php
+    }
+  }
 
 	$s = $p["saveorsubmit"];
 	if ($s=="submit") {
@@ -14,8 +22,12 @@ function handle_post($p) {
 		$users = json_decode(file_get_contents('users.json'),true);
 		$id = $p["id"];
     $d = [];
-		if ($_FILES) {
-      foreach ($_FILES as $key => $image) {
+    if (!isset($admin)) {
+      $d[$sd] = time();
+      $users[$id][$sd] = time();
+    }
+		if ($f) {
+      foreach ($f as $key => $image) {
         if (!($image["error"] > 0) and ($image["size"] > 0) and exif_imagetype($image["tmp_name"])) {
     			$imageloc = "images/".$key."_".$id.".".pathinfo($image["name"],PATHINFO_EXTENSION);
     			move_uploaded_file($image["tmp_name"], $imageloc);
@@ -24,7 +36,7 @@ function handle_post($p) {
         }
       }
 		}
-    $exclude = ['id','saveorsubmit'];
+    $exclude = ['saveorsubmit'];
     $esg = json_decode(file_get_contents('esg.json'),true);
     foreach ($esg["questions"] as $category) {
       foreach ($category[1]["fields"] as $question) {
@@ -45,6 +57,9 @@ function handle_post($p) {
     $jsonstring = json_encode($users);
     $delta = json_encode($d);
     include("admin_util.php");
+    if (isset($admin)) {
+      $s = "admin ".$admin;
+    }
     db_write($delta, $s, $users[$id]["first"], $users[$id]["last"], $id, $jsonstring); ?>
 	  <div class="alert alert-success" role="alert"><?php echo $msg ?> Your response has been <?php echo $sd?>!</div>
 	<?php }
@@ -86,7 +101,7 @@ function category_print($category, $user) {?>
 		<div class="form-group">
 		<label><?php echo $question[2]?></label><br>
     <?php switch ($question[0]) {
-  		case "text":?>
+  		case "text": ?>
 				<input class="form-control" type="text" name="<?php echo $question[1]?>"><br>
 				<?php	break;
 	  	case "textarea":?>
