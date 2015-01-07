@@ -6,9 +6,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 </head>
 <body class="container">
-<input type="checkbox" title="Applicant View"
-  onclick="var c=this.checked;[].forEach.call(document.querySelectorAll('.notapplicant'),function(e){e.style.display=c?'none':''})">
-  <span class="notapplicant"> Applicant View</span>
 <div class="notapplicant">
 <?php
 
@@ -19,6 +16,11 @@ $users = admin_post($_POST, $admin);
 $esg = json_decode(file_get_contents('esg.json') , true);
 
 ?>
+</div>
+<input type="checkbox" title="Applicant View"
+  onclick="var c=this.checked;[].forEach.call(document.querySelectorAll('.notapplicant'),function(e){e.style.display=c?'none':''})">
+  <span class="notapplicant"> Applicant View</span>
+<div class="notapplicant">
 <h3>Welcome, administrator <?php echo $_SERVER['SSL_CLIENT_S_DN_CN']?>.
 </h3><br>
 

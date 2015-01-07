@@ -28,6 +28,12 @@ function admin_post($user, $admin) {
     if ((!isset($user["email"]) or $user["email"] == "") and isset($user["kerb"]) and $user["kerb"] != "") {
       $user["email"] = $user["kerb"]."@mit.edu";
     }
+    if ((!isset($user["email"]) or $user["email"] == "") or (!isset($user["first"]) or $user["first"] == "") or (!isset($user["last"]) or $user["last"] == "")) { ?>
+      <div class="alert alert-danger">
+        Please at least provide a first name, last name, and email address (or kerberos).
+      </div><?php
+      return $users;
+    }
     $id = str_replace('=','',base64_encode($user["email"]));
     $user["id"] = $id;
     $user["created"] = time();
@@ -36,11 +42,6 @@ function admin_post($user, $admin) {
       <div class="alert alert-warning">
         A user with that email already exists: 
         <a href="user.php?id=<?php echo $id ?>"><?php echo $users[$id]["first"]." ".$users[$id]["last"] ?></a>
-      </div>
-      <?php
-    } elseif (!isset($user["email"]) or !isset($user["first"]) or !isset($user["last"])) { ?>
-      <div class="alert alert-danger">
-        Please at least provide a first name, last name, and email address (or kerberos).
       </div>
       <?php
     } else {
