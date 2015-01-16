@@ -1,6 +1,8 @@
 <?php
-
 include("user_util.php");
+if(!function_exists("db_write")){
+  include("db.php"); 
+}
 
 function admin_login($server) {
   if (!$server['SSL_CLIENT_S_DN_CN']) {
@@ -11,7 +13,7 @@ function admin_login($server) {
     exit;
   }
 
-  $esg = json_decode(file_get_contents('esg.json') , true);
+  $esg = db_getesg();
   $admin = explode("@", $server['SSL_CLIENT_S_DN_Email']) [0];
   if (!in_array($admin, $esg["admins"])) {
     ?>You are not an administrator and don't have these privileges.
@@ -22,8 +24,8 @@ function admin_login($server) {
 }
 
 function admin_post($user, $admin) {
-  $esg = json_decode(file_get_contents('esg.json') , true);
-  $users = json_decode(file_get_contents('users.json'), true)[$esg["year"]];
+  $esg = db_getesg();
+  $users = db_getusers();
   if ($user) {
     if ((!isset($user["email"]) or $user["email"] == "") and isset($user["kerb"]) and $user["kerb"] != "") {
       $user["email"] = $user["kerb"]."@mit.edu";
@@ -34,7 +36,7 @@ function admin_post($user, $admin) {
       </div><?php
       return $users;
     }
-    $id = str_replace('=','',base64_encode($user["email"]));
+    $id = str_replace(['=','+','/'],['','-','_'],base64_encode($user["email"]));
     $user["id"] = $id;
     $user["created"] = time();
     $user["section"] = (time() < $esg["due"]["summer"]["part_a"]) ? "summer" : "fall";
@@ -48,7 +50,7 @@ function admin_post($user, $admin) {
       $users[$id] = $user;
       $user["id"] = $id;
       $delta = json_encode($user);
-      db_write($delta, "admin ".$admin, $user["first"], $user["last"], $id, $esg["year"], $users);
+      db_write($delta, "admin ".$admin, $id, $esg["year"], $user);
       // $to = $user["email"];
       // $subject = "Your MIT Experimental Study Group Application";
       // $message = "
@@ -62,25 +64,12 @@ function admin_post($user, $admin) {
       <div class="alert alert-success">
         The user 
         <a href="user.php?id=<?php echo $id ?>"><?php echo $user["first"]." ".$user["last"] ?></a>
-        has been added <!-- and was sent an email -->!
+        has been added<!-- and was sent an email -->!
       </div>
       <?php
     }
   }
   return $users;
-}
-
-function db_write($delta, $admin, $first, $last, $id, $year, $users) {
-  $userfile = json_decode(file_get_contents("users.json"), true);
-  $userfile[$year] = $users;
-  $jsonstring = json_encode($userfile);
-  $delta = str_replace(',',';COMMA;',$delta);
-  $timestamp = date("Y-m-d-G-i-s");
-  $change = sprintf("\n%s,%s,%s %s (%s),%s", $timestamp, $admin, $first, $last, $id, $delta);
-  file_put_contents('changelog.csv', $change, FILE_APPEND | LOCK_EX);
-  file_put_contents('users.json', $jsonstring, LOCK_EX);
-  file_put_contents('records/'.$timestamp.'.json', $jsonstring);
-  Print $msg;
 }
 
 function changelog_print() {
@@ -112,15 +101,10 @@ function changelog_print() {
       c.innerHTML = items[j].replace(/;COMMA;/g,", ").replace(/\-/g, "&#8209;");
       r.appendChild(c)
     }
-    r.style.cursor="pointer";
-    r.addEventListener('click',function(){
-      window.location = 'records.php?q='+items[0]
-    });
     tb.appendChild(r)
   }
   table.appendChild(tb);
   document.getElementById('changelog').appendChild(table);
   })()</script><?php
 }
-
 ?>

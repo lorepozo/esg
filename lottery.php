@@ -1,4 +1,9 @@
-<?php include("admin_util.php") ?>
+<?php
+include("admin_util.php");
+if(!function_exists("db_write")){
+  include("db.php");
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,8 +16,8 @@
 
 admin_login($_SERVER);
 
-$esg = json_decode(file_get_contents('esg.json') , true);
-$users = json_decode(file_get_contents('users.json'), true)[$esg["year"]];
+$esg = db_getesg();
+$users = db_getusers();
 $salt = "";
 
 if ($_GET and isset($_GET["salt"])) {

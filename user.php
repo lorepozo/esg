@@ -1,4 +1,9 @@
-<?php include("admin_util.php"); ?>
+<?php
+include("admin_util.php");
+if(!function_exists("db_write")){
+  include("db.php"); 
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,11 +20,12 @@ if (!isset($_GET) or !isset($_GET["id"])) {
   echo "An id must be provided to get user information</body></html>";
   exit;
 }
-$esg = json_decode(file_get_contents('esg.json'), true);
-$users = json_decode(file_get_contents('users.json'), true)[$esg["year"]];
+$esg = db_getesg();
+$users = db_getusers();
 $id = $_GET["id"];
 if (!isset($users[$id])) {
-  echo "The user does not exist</body></html>";
+  var_dump($users);
+  echo "\nThe user does not exist</body></html>";
   exit;
 }
 

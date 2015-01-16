@@ -8,24 +8,24 @@ your classes in ESG.</em></p>
 
 <?php
 foreach ($esg["subjects"] as $title => $subject) { ?>
-	  <br><label><?php echo $title?></label><br>
-	  <?php
-	  foreach ($subject["fields"] as $field) { ?>
-		  <label class="radio-inline"><input type="radio" name="<?php echo $subject["id"]?>"
-		  		 value="<?php echo $field[0]?>"><?php echo $field[1]?></label><br>
-	  <?php }	
-	} ?>
+    <br><label><?php echo $title?></label><br>
+    <?php
+    foreach ($subject["fields"] as $field) { ?>
+      <label class="radio-inline"><input type="radio" name="<?php echo $subject["id"]?>"
+           value="<?php echo $field[0]?>"><?php echo $field[1]?></label><br>
+    <?php }  
+  } ?>
 <br><p class="help-block">
-	  * ES.729 is 'Science Writing and New Media:
-	  Engineering Communication in Context' it is a CI-H taught by Dave Custer.<br>
-	  ** ES.S10 is 'Drugs and the Brain' taugh by Z. Fallows.<br>
-	  *** ES.S11 is 'There is more to physics than Newton', taught by Analia Barrantes.
+    * ES.729 is 'Science Writing and New Media:
+    Engineering Communication in Context' it is a CI-H taught by Dave Custer.<br>
+    ** ES.S10 is 'Drugs and the Brain' taugh by Z. Fallows.<br>
+    *** ES.S11 is 'There is more to physics than Newton', taught by Analia Barrantes.
 </p>
 
 
 <div class="form-group">
-	<label for="rcsubjects">What subjects will you take in the regular curriculum?</label>
-		<p class="help-block">Please list course numbers if you know them.</p>
-		<textarea class="form-control" name="rcsubjects"></textarea><br>
+  <label for="rcsubjects">What subjects will you take in the regular curriculum?</label>
+    <p class="help-block">Please list course numbers if you know them.</p>
+    <textarea class="form-control" name="rcsubjects"></textarea><br>
 </div>
 <hr>

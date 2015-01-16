@@ -1,4 +1,8 @@
 <?php
+if(!function_exists("db_write")){
+  include("db.php"); 
+}
+
 function users_print($esg, $users, $counter = false, $salt = false) {
   $img = '<td><img src="%s" style="max-height:60px;max-width:60px;" /></td>'
   ?><div class="table-responsive"><table id="users" class="table table-hover"><thead><tr><?php
@@ -32,8 +36,8 @@ function users_print($esg, $users, $counter = false, $salt = false) {
     ksort($users);
   }
   $images = [];
-  foreach ($esg["questions"] as $category) {
-    foreach ($category[1]["fields"] as $question) {
+  foreach ($esg["questions"] as $name => $category) {
+    foreach ($category["fields"] as $question) {
       if ($question[0] == 'image') {
         array_push($images, $question[1]);
       }
@@ -41,7 +45,8 @@ function users_print($esg, $users, $counter = false, $salt = false) {
   }
   if ($counter === true) {$c = 1;}
   foreach ($users as $sum => $user) {
-    $id = base64_encode($user["email"]);
+    if(!$sum){continue;}
+    $id = str_replace(['=','+','/'],['','-','_'],base64_encode($user["email"]));
     ?><tr><?php
     if ($counter === true) {
       echo '<th scope="row">'.$c++.'</th>';
@@ -131,9 +136,9 @@ function users_print($esg, $users, $counter = false, $salt = false) {
 function user_print($user) {
   $userj = $user;
   $useri = [];
-  $esg = json_decode(file_get_contents('esg.json'),true);
-  foreach ($esg["questions"] as $category) {
-    foreach ($category[1]["fields"] as $question) {
+  $esg = db_getesg();
+  foreach ($esg["questions"] as $name => $category) {
+    foreach ($category["fields"] as $question) {
       if ($question[0] == 'image') {
         unset($userj[$question[1]]);
         if (isset($user[$question[1]])) {

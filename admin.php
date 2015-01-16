@@ -1,4 +1,9 @@
-<?php include("admin_util.php") ?>
+<?php
+include("admin_util.php");
+if(!function_exists("db_write")){
+  include("db.php"); 
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +18,7 @@ $admin = admin_login($_SERVER);
 
 $users = admin_post($_POST, $admin);
 
-$esg = json_decode(file_get_contents('esg.json') , true);
+$esg = db_getesg();
 
 ?>
 </div>

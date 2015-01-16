@@ -1,0 +1,200 @@
+version 0
+year 2015
+DICT due
+  DICT summer
+    part_a 2015-06-10 00:00:00
+    part_b 2015-09-10 00:00:00
+  END
+  DICT fall
+    part_a 2015-09-10 00:00:00
+    part_b 2015-09-10 00:00:00
+  END
+END
+DICT required
+  LIST part_a
+    mitid
+    listbirthday
+    includepicture
+    whyesgtext
+    howdidyourhearofesg
+    whathaveyouheard
+    bestlearningexperience
+    othercomments
+  END
+  LIST part_b
+    termaddress
+    homeaddress
+    interests
+    advising
+    rcadvisor
+  END
+END
+LIST admins
+  lucasem
+  jorloff
+  ramsay
+END
+LIST cclist
+    lucasem@mit.edu
+END
+LIST overview
+  photo
+  first
+  last
+  email
+  kerb
+  id
+  created
+  saved
+  submitted
+END
+tech lucasem@mit.edu
+registerclasses 2015-09-10 00:00:00
+toptext VOID
+apperr <h2>Problem with Application</h2><p>We're sorry, but we encountered a problem when trying to serve your application.<p><p><b>Before filling out an application you must do all of the following.</b><br>1. Go to an ESG information session.<br>2. After the session have a staff member enter your name in our database.<br>3. Use the link we emailed to you to access this application.<p>If you have any questions or concerns, please contact us at <a href='mailto:esglizards@mit.edu'>esglizards@mit.edu</a>.
+instructions <p>Please answer all the questions in this form and then click the <b>submit</b> button at the bottom.<br>If you don't finish you can click the <b>save</b> button and come back to finish the form using the same link you already used.</p><p>Please note that admission to ESG is lottery based. Your answers to these questions help us learn something about you, but they will not affect your chances in the lottery.</p>
+SUBJECTS
+  esgbioradio Biology
+    OPTIONS
+      7012 ES.7012
+      nobio No biology in ESG
+    END
+  END
+  esgchemradio Chemistry
+    OPTIONS
+      5112 ES.5112
+      nochem No chemistry in ESG
+    END
+  END
+  esgphysicsradio Physics
+    OPTIONS
+      801 ES.801
+      8012 ES.8012
+      8022 ES.8022
+      nophys No physics in ESG
+    END
+  END
+  esgmathradio Math
+    OPTIONS
+      1801 ES.1801
+      1801A ES.181A/ES.182A
+      1802 ES.1802
+      1803 ES.1803
+      nomath No math in ESG
+    END
+  END
+  esghassradio HASS/CI-HW
+    OPTIONS
+      729 ES.729*
+      nohass No HASS in ESG
+    END
+  END
+  esgspecialtopicsradio Special Topics Seminar
+    OPTIONS
+      S10 ES.S10**
+      S11 ES.S11***
+      nospecial No special topic
+    END
+  END
+END
+LIST aftersubjects
+  Short Answers
+END
+DICT questions
+  DICT Demographics
+    FIELDS
+      TEXT mitid
+        PROMPT MIT ID
+      END
+      TEXTAREA termaddress
+        PROMPT Term Address
+        ROWS 4
+      END
+      TEXTAREA homeaddress
+        PROMPT Home Address
+        ROWS 4
+      END
+      TEXT localphone
+        PROMPT Cell (or local) phone
+      END
+      TEXT birthday
+        PROMPT Birthday (month/day/year)
+      END
+      TEXT nationality
+        PROMPT Nationality
+      END
+      TEXTAREA emergencycontact
+        PROMPT Emergency Contact
+        ROWS 2
+      END
+    END
+  END
+  DICT Permissions
+    text With your permission we would like share some of your information with the ESG community
+    FIELDS
+      RADIO listbirthday
+        PROMPT Is it ok to list your birthday (without the year) on our ESG birthday list?
+        OPTIONS
+          yes Yes
+          no No
+        END
+      END
+      RADIO includepicture
+        PROMPT ESG would like to post pictures of our students on a bulletin board and also to print a book of these pictures for use within ESG.  Please let us know if you would be willing to have your picture included.
+        OPTIONS
+          yes Yes, you may include my picture in the book and bulletin board.
+          no No, I'd prefer that my picture not be included in the book and bulletin board.
+        END
+      END
+      IMAGE photo
+        PROMPT Picture of You (optional)
+      END
+    END
+  END
+  DICT Advising
+    FIELDS
+      TEXT rcadvisor
+        PROMPT Regular curriculum advisor
+      END
+      RADIO advising
+        PROMPT Which type of advising group are you in?
+        OPTIONS
+          esgadvising Advisor in ESG
+          freshmanadvisingseminar Freshman advising seminar
+          traditionaladvising Traditional advising
+          interphaseadvising Interphase advising
+        END
+      END
+      TEXTAREA interests
+        PROMPT Interests: 
+        ROWS 8
+        HELPTEXT Please put a * next to those you'd like to have in common with your ESG advisor
+      END
+    END
+  END
+  DICT Short Answers
+    text We find it really useful and interesting to hear what you have to say. Since admission is lottery based this will not affect whether or not you get in to ESG.
+    FIELDS
+      TEXTAREA whyesgtext
+        PROMPT Why would you like to join ESG? What influenced you the most to consider joining?
+        ROWS 8
+      END
+      TEXTAREA howdidyourhearofesg
+        PROMPT How did you first hear about ESG?
+        ROWS 8
+      END
+      TEXTAREA whathaveyouheard
+        PROMPT What things have you heard about ESG and from whom (names optional)?
+        ROWS 8
+      END
+      TEXTAREA bestlearningexperience
+        PROMPT What has been your best learning experience before coming to MIT and why?
+        ROWS 8
+      END
+      TEXTAREA othercomments
+        PROMPT Are there any other comments you'd like to share with us about ESG or MIT at this point?
+        ROWS 8
+      END
+    END
+  END
+END
