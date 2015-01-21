@@ -114,7 +114,7 @@ function users_print($esg, $users, $counter = false, $salt = false) {
           if (check.checked) emailo[check.id]=allemails[check.id];
           else delete emailo[check.id];
         }
-        document.getElementById('email_selected').href="mailto:<esglizards@mit.edu>?bcc="+emails(emailo)+"&Subject=Your%20MIT%20ESG%20Application"
+        document.getElementById('email_selected').href="mailto:?bcc="+emails(emailo)+"&Subject=Your%20MIT%20ESG%20Application"
       };
       checkupdate();
       document.getElementById('toggle_selected').addEventListener('click', function(){
@@ -186,7 +186,7 @@ function user_print($user) {
     if (typeof json[key] == "number") {
       json[key] = (new Date(json[key]*1000)).toDateString()
     }
-    v.innerHTML = String(json[key]).replace(/\r\n/g,"<br>");
+    v.innerHTML = String(json[key]).replace(/(\r)?\n/g,"<br>");
     t.appendChild(k);
     t.appendChild(v);
     tbody.appendChild(t);

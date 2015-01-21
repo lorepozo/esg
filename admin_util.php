@@ -3,6 +3,9 @@ include("user_util.php");
 if(!function_exists("db_write")){
   include("db.php"); 
 }
+if(!function_exists("comm_update_user")){
+  include("comm.php");
+}
 
 function admin_login($server) {
   if (!$server['SSL_CLIENT_S_DN_CN']) {
@@ -47,20 +50,11 @@ function admin_post($user, $admin) {
       </div>
       <?php
     } else {
-      $users[$id] = $user;
       $user["id"] = $id;
+      $users[$id] = $user;
       $delta = json_encode($user);
       db_write($delta, "admin ".$admin, $id, $esg["year"], $user);
-      // $to = $user["email"];
-      // $subject = "Your MIT Experimental Study Group Application";
-      // $message = "
-      //   <html><head><title>".$subject."</title></head><body>
-      //   Hello, ".$user["first"]."!
-      //
-      //   Thank you for reaching out to us at ESG.
-      //   </body></html>";
-      // $headers = 'From: MIT Experimental Study Group <esglizards@mit.edu>' . "\r\n";
-      // mail($to, $subject, $message, $headers); ?>
+      comm_update_user($user, "add"); ?>
       <div class="alert alert-success">
         The user 
         <a href="user.php?id=<?php echo $id ?>"><?php echo $user["first"]." ".$user["last"] ?></a>

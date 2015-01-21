@@ -3,14 +3,17 @@
 if(!function_exists("db_write")){
   include("db.php"); 
 }
+if(!function_exists("comm_update_user")){
+  include("comm.php");
+}
 
 function handle_post($p, $f, $server) {
-
+  $response = "";
   $esg = db_getesg();
   if (@$server['SSL_CLIENT_S_DN_CN']) {
     if (in_array(explode("@", $server['SSL_CLIENT_S_DN_Email'])[0], $esg["admins"])) {
       $admin = explode("@", $server['SSL_CLIENT_S_DN_Email'])[0];
-      ?><div class="alert alert-info" role="alert" style="margin:0">Any changes you make will be marked as administrator <code><?php echo $admin ?></code></div><?php
+      $reponse .= '<div class="alert alert-info" role="alert" style="margin:0">Any changes you make will be marked as administrator <code>'.$admin.'</code></div>';
     }
   }
 
@@ -60,37 +63,33 @@ function handle_post($p, $f, $server) {
     }
     $delta = json_encode($d);
     include("admin_util.php");
+    $type = $s;
     if (isset($admin)) {
       $s = "admin ".$admin;
+      $type = "admin";
     }
-    db_write($delta, $s, $id, $esg["year"], $users[$id]); ?>
-    <div class="alert alert-success" role="alert">Your response has been <?php echo $sd?>!</div>
-  <?php }
+    db_write($delta, $s, $id, $esg["year"], $users[$id]);
+    comm_update_user($users[$id], $type);
+    $response.= '<div class="alert alert-success" role="alert">Your response has been '.$sd.'!</div>';
+  }
   
-  return $users[$id];
+  return $response;
 
 }
 
 // GET ARGS: id=1234
 function init_user() {
-  global $esg, $user, $users, $id;
-  $esg = db_getesg();
-  if ($users and $id) {
-    $user = $users[$id];
-  } else {
-    $users = db_getusers();
-    $id = $_GET["id"];
-    if (!isset($id) and @$_SERVER['SSL_CLIENT_S_DN_CN']) {
-      $kerb = explode("@", $_SERVER['SSL_CLIENT_S_DN_Email'])[0];
-      foreach ($users as $tmpid => $tmpuser) {
-        if ($tmpuser["kerb"]==$kerb) {
-          $id = $tmpid;
-          break;
-        }
+  $id = $_GET["id"];
+  if (isset($id)) {
+    return db_getuser($id);
+  }
+  $users = db_getusers();
+  if (!isset($id) and @$_SERVER['SSL_CLIENT_S_DN_CN']) {
+    $kerb = explode("@", $_SERVER['SSL_CLIENT_S_DN_Email'])[0];
+    foreach ($users as $id => $tmpuser) {
+      if ($tmpuser["kerb"]==$kerb) {
+        return db_getuser($id);
       }
-    }
-    if (isset($id)) {
-      $user = $users[$id];
     }
   }
 }

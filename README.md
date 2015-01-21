@@ -68,16 +68,19 @@ View this code live:
 
 ## `.user` files
 The layout of a `.user` file is simple: each line should match the format `key value`
-
 where __key__ is an application field id (such as `mitid` or `esgphysicsradio`) which must NOT have any spaces,
 and __value__ is the associated value (which can have spaces).
 
 If you'd like some values to be empty, simply use the keyword `VOID`.
 
+If you'd like to use newlines in the value, use the literal `%N%`
+
 Comment lines must have the first non-whitespace character be the hash (#).
 
 ## The `esg` file
 The `esg` file has the same format as a `.user` file, but with some added keywords:
+
+**NOTE**: as with `.user` files, newlines are written with `%N%`.
 
 ### DICT
 ```
@@ -91,6 +94,8 @@ END
 Can only exist inside another DICT (or the root).
 
 The keys must not have any spaces. This is the same structure as the `esg` file itself, containing key/value pairs as well as the special keyword groups listed in this section.
+
+In the `emailadd`, `emailsave`, and `emailsubmit` keys, you may use the following variables: `%FIRSTNAME%`, `%LASTNAME%`, and `%APPLINK%`.
 
 ### LIST
 ```

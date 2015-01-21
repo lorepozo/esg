@@ -16,40 +16,34 @@ else:
 
 class ParseException(Exception):
     def __init__(self, message):
-        super(ParseException, self).__init__("%s at line %d in %s." % (message, index, path))
+        super(ParseException, self).__init__("%s at line %d" % (message, index))
 
-def parse_user(_path):
+def parse_user(f):
     global index
-    global path
-    path = _path
     index = 0
     user = {}
-    with open(path, "r") as f:
-        for line in f:
-            try:
-                key, value = twoarg(line)
-            except ValueError:
-                if len(line.strip()) == 0 or line.strip()[0] == '#':
-                    continue
-                raise ParseException("USER attributes require at least a key and a value, separated by a space.\nRead \"%s\"" % line.strip())
-            value = replace(value, '\r', '\r\n')
-            if re.match('\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', value):
-                value = int(time.mktime(time.strptime(value, "%Y-%m-%d %H:%M:%S")))
-            elif value == "VOID":
-                value = ""
-            user[key] = value
-            index += 1
+    for line in f:
+        try:
+            key, value = twoarg(line)
+        except ValueError:
+            if len(line.strip()) == 0 or line.strip()[0] == '#':
+                continue
+            raise ParseException("USER attributes require at least a key and a value, separated by a space.\nRead \"%s\"" % line.strip())
+        value = replace(value, '%N%', '\r\n')
+        if re.match('\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', value):
+            value = int(time.mktime(time.strptime(value, "%Y-%m-%d %H:%M:%S")))
+        elif value == "VOID":
+            value = ""
+        user[key] = value
+        index += 1
     return user
 
-def parse_esg(_path):
+def parse_esg(f):
     global index
-    global path
     global file
-    path = _path
     index = 0
     file = []
-    with open(path, "r") as f:
-        temp = f.readlines()
+    temp = f.readlines()
     for line in temp:
         if len(line.strip()) > 0 and line.strip()[0] != "#":
             file.append(line)
@@ -80,7 +74,7 @@ def parse_dict(root=False):
             else:
                 raise ParseException("DICT children must either be a DICT, LIST, SUBJECTS, or a key/value pair.\nRead \"%s\"" % key)
             continue
-        value = replace(value, '\r', '\r\n')
+        value = replace(value, '%N%', '\r\n')
         if key == "DICT":
             d[value] = parse_dict()
         elif key == "LIST":
@@ -99,7 +93,7 @@ def parse_list():
     while True:
         line = file[index]
         index += 1
-        value = replace(line.strip(), '\r', '\r\n')
+        value = replace(line.strip(), '%N%', '\r\n')
         if value == "END":
             break
         elif value == "VOID":
@@ -120,7 +114,7 @@ def parse_subjects():
             if end == "END":
                 break
             raise ParseException("SUBJECTS subgroup must be an id and a title, separated by a space.\nRead \"%s\"" % end)
-        value = replace(value, '\r', '\r\n')
+        value = replace(value, '%N%', '\r\n')
         subjects[value] = parse_subject(key)
     return subjects
 
@@ -177,7 +171,7 @@ def parse_field_text(id):
             if end == "END":
                 break
             raise ParseException("TEXT fields can only have PROMPT and HELPTEXT parameters.\nRead \"%s\"" % end)
-        value = replace(value, '\r', '\r\n')
+        value = replace(value, '%N%', '\r\n')
         if value == "VOID":
             value = ""
         if key == "PROMPT":
@@ -201,7 +195,7 @@ def parse_field_textarea(id):
             if end == "END":
                 break
             raise ParseException("TEXTAREA fields can only have PROMPT, ROWS, and HELPTEXT parameters.\nRead \"%s\"" % end)
-        value = replace(value, '\r', '\r\n')
+        value = replace(value, '%N%', '\r\n')
         if value == "VOID":
             value = ""
         if key == "PROMPT":
@@ -227,7 +221,7 @@ def parse_field_image(id):
             if end == "END":
                 break
             raise ParseException("IMAGE fields can only have PROMPT and HELPTEXT parameters.\nRead \"%s\"" % end)
-        value = replace(value, '\r', '\r\n')
+        value = replace(value, '%N%', '\r\n')
         if value == "VOID":
             value = ""
         if key == "PROMPT":
@@ -255,7 +249,7 @@ def parse_field_radio(id):
             else:
                 raise ParseException("RADIO fields can only have PROMPT, OPTIONS, and HELPTEXT parameters.\nRead \"%s\"" % end)
             continue
-        value = replace(value, '\r', '\r\n')
+        value = replace(value, '%N%', '\r\n')
         if value == "VOID":
             value = ""
         if key == "PROMPT":
@@ -279,7 +273,7 @@ def parse_field_radio_options():
             if end == "END":
                 break
             raise ParseException("OPTIONS must have an id and a description, separated by a space.\nRead \"%s\"" % end)
-        value = replace(value, '\r', '\r\n')
+        value = replace(value, '%N%', '\r\n')
         options.append([key, value])
     return options
 
@@ -291,21 +285,38 @@ def encode_user(d):
             value = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(value))
         elif value == "":
             value = "VOID"
-        value = re.sub("(\r)?\n", "\r", value)
+        value = replace(value, '\r', '')
+        value = replace(value, '\n', '%N%')
         out += "%s %s\n" % (key, value)
     return out
 
-parser = argparse.ArgumentParser(description="A parser for the esg & user types. Use VOID for blank fields and begin comment lines with #.")
-parser.add_argument('--user', type=str, help="path to `.user` file to be parsed")
-parser.add_argument('--esg', type=str, help="path to `esg` file to be parsed")
-parser.add_argument('--encode', help="read json from stdin into encoded user", action="store_true")
+parser = argparse.ArgumentParser(description="""
+A parser for the esg & user types. Use VOID for blank fields and begin comment lines with #.
+Use %N% to denote newlines. Email fields have special variables used with %FIRSTNAME%, %LASTNAME%, and %APPLINK%.
+""")
+parser.add_argument('--user', help="read user from stdin into json", action="store_true")
+parser.add_argument('--esg', help="read esg from stdin into json", action="store_true")
+parser.add_argument('--encode', help="read json from stdin into user", action="store_true")
+parser.add_argument('--file', type=str, help="path to file in place of stdin")
 args = parser.parse_args()
 
 if args.user:
-    print(json.dumps(parse_user(args.user)))
+    if args.file:
+        with open(args.file, "r") as f:
+            print(json.dumps(parse_user(f)))
+    else:
+        print(json.dumps(parse_user(sys.stdin)))
 elif args.esg:
-    print(json.dumps(parse_esg(args.esg)))
+    if args.file:
+        with open(args.file, "r") as f:
+            print(json.dumps(parse_esg(f)))
+    else:
+        print(json.dumps(parse_user(sys.stdin)))
 elif args.encode:
-    print(encode_user(json.load(sys.stdin)))
+    if args.file:
+        with open(args.file, "r") as f:
+            print(encode_user(json.load(f)))
+    else:
+        print(encode_user(json.load(sys.stdin)))
 else:
     parser.print_help()
