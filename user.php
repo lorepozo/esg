@@ -20,25 +20,25 @@ if (!isset($_GET) or !isset($_GET["id"])) {
   echo "An id must be provided to get user information</body></html>";
   exit;
 }
-$esg = db_getesg();
 $users = db_getusers();
 $id = $_GET["id"];
-if (!isset($users[$id])) {
-  var_dump($users);
+$user = $users[$id];
+if (!isset($user)) {
   echo "\nThe user does not exist</body></html>";
   exit;
 }
 
 $path = preg_replace('/\/[^\/]*$/', '/', $_SERVER["PHP_SELF"]);
-$url = "http://".$_SERVER["SERVER_NAME"].$path."app.php?id=".$id;
+$end = $user["apptype"].".php?id=".$id;
+$url = "http://".$_SERVER["SERVER_NAME"].$path.$end;
 ?>
 <h2>Application ID: <?php echo $id ?></h2>
 
-<h3><a href="app.php?id=<?php echo $id ?>"><em>Edit this user</em></a></h3><br>
+<h3><a href="<?php echo $user["apptype"] ?>.php?id=<?php echo $id ?>"><em>Edit this user</em></a></h3><br>
 
 <h4>Link for applicant: <a href="<?php echo $url ?>"><?php echo $url ?></a></h4>
 
-<?php user_print($users[$id]) ?>
+<?php user_print($user) ?>
 
 </body>
 </html>

@@ -1,0 +1,72 @@
+version 0
+due 2015-06-10 00:00:00
+apptype spring_a
+toptext VOID
+apperr <h2>Problem with Application</h2><p>We're sorry, but we encountered a problem when trying to serve your application.</p><p><b>Before filling out an application you must do all of the following.</b><br>1. Go to an ESG information session.<br>2. After the session have a staff member enter your name in our database.<br>3. Use the link we emailed to you to access this application.</p>If you have any questions or concerns, please contact us at <a href='mailto:esglizards@mit.edu'>esglizards@mit.edu</a>.
+apptypeerr <h2>Problem with Application</h2><p>We're sorry, but you can't view this particular app at this type. Please use the correct form for your application.</p>
+instructions <p>Please answer all the questions in this form and then click the <b>submit</b> button at the bottom.<br>If you don't finish you can click the <b>save</b> button and come back to finish the form using the same link you already used.</p><p>Please note that admission to ESG is lottery based. Your answers to these questions help us learn something about you, but they will not affect your chances in the lottery.</p>
+emailsave Hello, %FIRST|applicant%!%N%%N%Your application has been saved. To continue your application, go to %APPLINK%.
+emailsubmit Hello, %FIRST|applicant%!%N%%N%Thank you for submitting your application! We'll let you know as soon as a decision has been made.
+DICT questions
+  DICT Demographics
+    FIELDS
+      TEXT mitid
+        PROMPT MIT ID
+      END
+      TEXT birthday
+        PROMPT Birthday (month/day/year)
+      END
+      TEXT nationality
+        PROMPT Nationality
+        HELPTEXT Your answer does not affect your chances of being admitted.
+      END
+    END
+  END
+  DICT Permissions
+    text With your permission we would like share some of your information with the ESG community
+    FIELDS
+      RADIO listbirthday
+        PROMPT Is it ok to list your birthday (without the year) on our ESG birthday list?
+        OPTIONS
+          yes Yes
+          no No
+        END
+      END
+      RADIO includepicture
+        PROMPT ESG would like to post pictures of our students on a bulletin board and also to print a book of these pictures for use within ESG.  Please let us know if you would be willing to have your picture included.
+        OPTIONS
+          yes Yes, you may include my picture in the book and bulletin board.
+          no No, I'd prefer that my picture not be included in the book and bulletin board.
+        END
+      END
+      IMAGE photo
+        PROMPT Picture of You (optional)
+      END
+    END
+  END
+  DICT Short Answers
+    text We find it really useful and interesting to hear what you have to say. Since admission is lottery based this will not affect whether or not you get in to ESG.
+    FIELDS
+      TEXTAREA whyesgtext
+        PROMPT Why would you like to join ESG? What influenced you the most to consider joining?
+        ROWS 8
+      END
+      TEXTAREA howdidyourhearofesg
+        PROMPT How did you first hear about ESG?
+        ROWS 8
+      END
+      TEXTAREA whathaveyouheard
+        PROMPT What things have you heard about ESG and from whom (names optional)?
+        ROWS 8
+      END
+      TEXTAREA bestlearningexperience
+        PROMPT What has been your best learning experience before coming to MIT and why?
+        ROWS 8
+      END
+      TEXTAREA othercomments
+        PROMPT Are there any other comments you'd like to share with us about ESG or MIT at this point?
+        ROWS 8
+      END
+    END
+  END
+END

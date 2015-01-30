@@ -17,7 +17,7 @@ $admin = admin_login($_SERVER);
 
 $users = admin_post($_POST, $admin);
 
-$esg = db_getesg();
+$esg_globals = db_getglobals();
 
 ?>
 <h3>Welcome, administrator <?php echo $_SERVER['SSL_CLIENT_S_DN_CN']?>.
@@ -26,11 +26,19 @@ $esg = db_getesg();
 <h2><a href="lottery.php">Lottery</a></h2>
 
 <h2>Applicants</h2>
-<?php users_print($esg, $users) ?>
+<?php users_print($users) ?>
 
 <h2>Add Applicant <a href="add.php">Solo link</a></h2>
 <form method="post">
   <div class="form-inline">
+    <div class="form-group">
+      <label class="sr-only" for="apptype">Application Type</label>
+      <select name="apptype" class="form-control">
+        <?php foreach($esg_globals["apptypes"] as $apptype) { ?>
+          <option value="<?php echo $apptype ?>"><?php echo $apptype ?></option>
+        <?php } ?>
+      </select>
+    </div>
     <div class="form-group">
       <label class="sr-only" for="first">First Name</label>
       <input type="text" class="form-control" name="first" placeholder="First Name">

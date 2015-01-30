@@ -6,6 +6,21 @@ View this code live:
 
 
 ## File Overview
+
+- `esg_records/*`
+  * Stores old versions of `.esg` files.
+- `images/*`
+  * Stores images associated with each applicant
+- `resources/*`
+  * HTTP resources (such as javascript files, stylesheets, logos)
+- `users/*`
+  * Used via `parser.py` and `db.php`
+  * This folder contains _year_ folders, which are full of `*.user` files (the latest, as well as old copies for any set of changes on a user)
+- `add.php`
+  * Dependencies:
+    1. `admin_util.php`
+    2. `db.php`
+  * This is a minimal interface for adding a user. Intended for use at the end of an information session.
 - `admin.php`
   * Dependencies:
     1. `admin_util.php`
@@ -21,7 +36,7 @@ View this code live:
   * Dependencies:
     1. `app_subjects.php`
     2. `app_util.php`
-  * This is the interface for users. Here, a GET parameter `id` can be set to enter a certain application.
+  * This is the interface for users. When used (via another file) a GET parameter `id` can be set to specify the applicant.
   * Alternatively, if the user has his/her MIT certificate and the associated kerberos is registered with the user's application, authentication can done without the application id.
 - `app_subjects.php`
   * Organizes special formatting for subjects
@@ -38,9 +53,18 @@ View this code live:
     2. Type (save/submit/admin [admin kerb])
     3. User (id) (the user for which information was added)
     4. Diff (json string of changes)
-- `esg`
+- `comm.php`
+  * Dependencies:
+    1. `db.php`
+  * Handles all email communication.
+- `db.php`
+  * Dependencies:
+    1. `parser.py`
+  * This is the sole interface between the application system and actual stored data.
+  * Any read/write operations must be done via this file.
+- `globals.esg`
   * Used via `parser.py` and `db.php`
-  * With the exception of the fields such as `"admins"` field, everything is for the sake of application fields and general application info.
+  * Specifies universal constants that aren't application-dependant.
   * This file is VITAL. Be very careful when making changes.
 - `lottery.php`
   * Dependencies:
@@ -50,10 +74,10 @@ View this code live:
   * Interface for lottery. Uses md5 hash on the seed and user id for sorting.
 - `parser.py`
   * Used via `db.php`
-  * Parses `*.user` files and the `esg` file into json objects
+  * Parses `*.user` files and the various `.esg` files into json objects
   * Parses user json object into `*.user` file
 - `php.ini`
-  * PHP dependencies
+  * PHP universal dependencies
 - `user.php`
   * Dependencies:
     1. `admin_util.php`
@@ -62,9 +86,10 @@ View this code live:
   * Interface for viewing information on a single user
 - `user_util.php`
   * Views for all users (lottery and otherwise) as well as single users
-- `users/*`
-  * Used via `parser.py` and `db.php`
-  * This folder contains _year_ folders, which are full of `*.user` files (the latest, as well as old copies for any set of changes on a user)
+- These files are for particular application instances:
+  * `spring_a.esg`, `spring_a.php`
+  * `spring_b.esg`, `spring_b.php`
+  * `fall.esg`, `fall.php`
 
 ## `.user` files
 The layout of a `.user` file is simple: each line should match the format `key value`
@@ -77,8 +102,8 @@ If you'd like to use newlines in the value, use the literal `%N%`
 
 Comment lines must have the first non-whitespace character be the hash (#).
 
-## The `esg` file
-The `esg` file has the same format as a `.user` file, but with some added keywords:
+## `.esg` files
+The `.esg` files have the same format as a `.user` file, but with some added keywords:
 
 **NOTE**: as with `.user` files, newlines are written with `%N%`.
 
@@ -95,7 +120,11 @@ Can only exist inside another DICT (or the root).
 
 The keys must not have any spaces. This is the same structure as the `esg` file itself, containing key/value pairs as well as the special keyword groups listed in this section.
 
-In the `emailadd`, `emailsave`, and `emailsubmit` keys, you may use the following variables: `%FIRSTNAME%`, `%LASTNAME%`, and `%APPLINK%`.
+In the `emailadd`, `emailsave`, and `emailsubmit` keys, you may use the keyword `%APPLINK%`, or any user field (e.g. `first` or `email`) with the syntax:
+
+`%FIRST%` or `%FIRST|Alternative text%` (if the 'first' field isn't set for the user)
+
+Note that the field name is *capitalized*, and a pipe `|` is used to separate the field and the alternative text.
 
 ### LIST
 ```

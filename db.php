@@ -1,5 +1,6 @@
 <?php
-function db_write($delta, $admin, $id, $year, $user) {
+function db_write($delta, $admin, $id, $user) {
+  $year = db_getglobals()["year"];
   $userfile = sprintf('users/%s/%s.user', $year, $id);
   $userfilelog = sprintf('users/%s/%d.%s.user',  $year, time(), $id);
   
@@ -23,17 +24,27 @@ function db_write($delta, $admin, $id, $year, $user) {
     file_put_contents($userfile, $contents, LOCK_EX);
     file_put_contents($userfilelog, $contents);
   } else {
-    ?>There was a problem writing your change to the database. Please contact <?php echo $esg["tech"] ?> for assistance<?php
+    comm_inform_tech(sprintf("Badness reported in %s, at line %s.", __FILE__, __LINE__));
   }
+}
+
+function db_getglobals() {
+  return json_decode(shell_exec("./parser.py --esg --file ./globals.esg"), true);
+}
+
+function db_getesgfromfile($file) {
+  return json_decode(shell_exec("./parser.py --esg --file ./$file"), true);
 }
 
 function db_getesg($alt=null) {
   global $ESG_FILE;
   if(!isset($ESG_FILE) || !file_exists($ESG_FILE)){
-    $ESG_FILE = 'esg';
+    comm_inform_tech(sprintf("Badness reported in %s, at line %s.", __FILE__, __LINE__));
+    echo db_getglobals()["fatalerr"];
+    exit;
   }
   if($alt == null){
-    return json_decode(shell_exec("./parser.py --esg --file ./$ESG_FILE"), true);
+    return db_getesgfromfile($ESG_FILE);
   }
   $descriptorspec = array(
      0 => array("pipe", "r"),
@@ -50,29 +61,34 @@ function db_getesg($alt=null) {
     fclose($pipes[2]);
     proc_close($process);
     return [json_decode($contents), $stderr];
+  } else {
+    comm_inform_tech(sprintf("Badness reported in %s, at line %s.", __FILE__, __LINE__));
+    echo db_getglobals()["fatalerr"];
+    exit;
   }
 }
 
-function db_getuser($id, $esg=null) {
-  if($esg === null){
-    $esg = db_getesg();
+function db_getuser($id, $year=null) {
+  if($year === null){
+    $esg_globals = db_getglobals();
+    $year = $esg_globals["year"];
   }
-  $userfile = sprintf('users/%s/%s.user', $esg["year"], $id);
+  $userfile = "users/$year/$id.user";
   $user = json_decode(shell_exec("./parser.py --user --file ".$userfile), true);
   return $user;
 }
 
 function db_getusers() {
-  $esg = db_getesg();
-  $dir = 'users/'.$esg["year"];
+  $esg_globals = db_getglobals();
+  $year = $esg_globals["year"];
+  $dir = "users/$year";
   $files = scandir($dir);
   $users = [];
   foreach($files as $file){
     if($file == "." or substr_count($file, '.')>1){continue;}
     $id = explode(".", $file)[0];
-    $user = db_getuser($id, $esg);
+    $user = db_getuser($id, $year);
     $users[$id] = $user;
   }
   return $users;
 }
-?>

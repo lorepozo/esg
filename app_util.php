@@ -9,11 +9,11 @@ if(!function_exists("comm_update_user")){
 
 function handle_post($p, $f, $server) {
   $response = "";
-  $esg = db_getesg();
+  $esg_globals = db_getglobals();
   if (@$server['SSL_CLIENT_S_DN_CN']) {
-    if (in_array(explode("@", $server['SSL_CLIENT_S_DN_Email'])[0], $esg["admins"])) {
+    if (in_array(explode("@", $server['SSL_CLIENT_S_DN_Email'])[0], $esg_globals["admins"])) {
       $admin = explode("@", $server['SSL_CLIENT_S_DN_Email'])[0];
-      $reponse .= '<div class="alert alert-info" role="alert" style="margin:0">Any changes you make will be marked as administrator <code>'.$admin.'</code></div>';
+      $response .= '<div class="alert alert-info" role="alert" style="margin:0">Any changes you make will be marked as administrator <code>'.$admin.'</code></div>';
     }
   }
 
@@ -62,13 +62,13 @@ function handle_post($p, $f, $server) {
       }
     }
     $delta = json_encode($d);
-    include("admin_util.php");
     $type = $s;
     if (isset($admin)) {
+      ?><script>alert()</script><?php
       $s = "admin ".$admin;
       $type = "admin";
     }
-    db_write($delta, $s, $id, $esg["year"], $users[$id]);
+    db_write($delta, $s, $id, $users[$id]);
     comm_update_user($users[$id], $type);
     $response.= '<div class="alert alert-success" role="alert">Your response has been '.$sd.'!</div>';
   }
@@ -92,6 +92,7 @@ function init_user() {
       }
     }
   }
+  return null;
 }
 
 function category_print($name, $category, $user) {?>

@@ -1,0 +1,98 @@
+version 0
+due 2015-09-10 00:00:00
+apptype spring_b
+toptext VOID
+apperr <h2>Problem with Application</h2><p>We're sorry, but we encountered a problem when trying to serve your application.</p><p><b>Before filling out an application you must do all of the following.</b><br>1. Go to an ESG information session.<br>2. After the session have a staff member enter your name in our database.<br>3. Use the link we emailed to you to access this application.</p>If you have any questions or concerns, please contact us at <a href='mailto:esglizards@mit.edu'>esglizards@mit.edu</a>.
+apptypeerr <h2>Problem with Application</h2><p>We're sorry, but you can't view this particular app at this type. Please use the correct form for your application.</p>
+instructions <p>Please answer all the questions in this form and then click the <b>submit</b> button at the bottom.<br>If you don't finish you can click the <b>save</b> button and come back to finish the form using the same link you already used.</p><p>Please note that admission to ESG is lottery based. Your answers to these questions help us learn something about you, but they will not affect your chances in the lottery.</p>
+emailsave Hello, %FIRST|applicant%!%N%%N%Your application has been saved. To continue your application, go to %APPLINK%.
+emailsubmit Hello, %FIRST|applicant%!%N%%N%Thank you for submitting your application! We'll let you know as soon as a decision has been made.
+SUBJECTS
+  esgbioradio Biology
+    OPTIONS
+      7012 ES.7012
+      nobio No biology in ESG
+    END
+  END
+  esgchemradio Chemistry
+    OPTIONS
+      5112 ES.5112
+      nochem No chemistry in ESG
+    END
+  END
+  esgphysicsradio Physics
+    OPTIONS
+      801 ES.801
+      8012 ES.8012
+      8022 ES.8022
+      nophys No physics in ESG
+    END
+  END
+  esgmathradio Math
+    OPTIONS
+      1801 ES.1801
+      1801A ES.181A/ES.182A
+      1802 ES.1802
+      1803 ES.1803
+      nomath No math in ESG
+    END
+  END
+  esghassradio HASS/CI-HW
+    OPTIONS
+      729 ES.729*
+      nohass No HASS in ESG
+    END
+  END
+  esgspecialtopicsradio Special Topics Seminar
+    OPTIONS
+      S10 ES.S10**
+      S11 ES.S11***
+      nospecial No special topic
+    END
+  END
+END
+LIST aftersubjects
+  Short Answers
+END
+DICT questions
+  DICT Demographics
+    FIELDS
+      TEXTAREA termaddress
+        PROMPT Term Address
+        ROWS 4
+      END
+      TEXTAREA homeaddress
+        PROMPT Home Address
+        ROWS 4
+      END
+      TEXT localphone
+        PROMPT Cell (or local) phone
+      END
+      TEXTAREA emergencycontact
+        PROMPT Emergency Contact
+        ROWS 2
+      END
+    END
+  END
+  DICT Advising
+    FIELDS
+      TEXT rcadvisor
+        PROMPT Regular curriculum advisor
+      END
+      RADIO advising
+        PROMPT Which type of advising group are you in?
+        OPTIONS
+          esgadvising Advisor in ESG
+          freshmanadvisingseminar Freshman advising seminar
+          traditionaladvising Traditional advising
+          interphaseadvising Interphase advising
+        END
+      END
+      TEXTAREA interests
+        PROMPT Interests: 
+        ROWS 8
+        HELPTEXT Please put a * next to those you'd like to have in common with your ESG advisor
+      END
+    END
+  END
+END

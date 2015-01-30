@@ -16,7 +16,6 @@ if(!function_exists("db_write")){
 
 admin_login($_SERVER);
 
-$esg = db_getesg();
 $users = db_getusers();
 $salt = "";
 
@@ -32,7 +31,7 @@ if ($_GET and isset($_GET["salt"])) {
   <button type="submit" class="btn btn-primary">Generate</button>
 </form>
 <div class="table-responsive">
-<?php users_print($esg, $users, true, $salt) ?>
+<?php users_print($users, true, $salt) ?>
 </div>
 </body>
 </html>

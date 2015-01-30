@@ -1,0 +1,35 @@
+version 0
+year 2015
+LIST apptypes
+  spring_a
+  spring_b
+  fall
+END
+LIST admins
+  lucasem
+  jorloff
+  ramsay
+END
+LIST overview
+  photo
+  first
+  last
+  email
+  kerb
+  id
+  created
+  saved
+  submitted
+END
+tech lucasem@mit.edu
+DICT emailheaders
+  from ESG Application Staff <esglizards@mit.edu>
+  LIST cc
+    Lucas Morales <lucasem@mit.edu>
+  END
+  LIST bcc
+    Lucas Morales <lucasem@mit.edu>
+  END
+END
+emailadd Hello, %FIRST|applicant%!%N%%N%We've added you to the ESG application database. To get started with your application, go to %APPLINK%.
+fatalerr Looks like you've experienced an error. We're looking into the issue. Let us know if you have any further concerns at <a href="mailto:esglizards@mit.edu">esglizards@mit.edu</a>.

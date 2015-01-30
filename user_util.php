@@ -1,10 +1,11 @@
 <?php
 if(!function_exists("db_write")){
-  include("db.php"); 
+  include("db.php");
 }
 
-function users_print($esg, $users, $counter = false, $salt = false) {
-  $img = '<td><img src="%s" style="max-height:60px;max-width:60px;" /></td>'
+function users_print($users, $counter = false, $salt = false) {
+  $esg_globals = db_getglobals();
+  $img = '<td><img src="%s" style="max-height:60px;max-width:60px;" /></td>';
   ?><div class="table-responsive"><table id="users" class="table table-hover"><thead><tr><?php
   if ($counter === true) {
     echo "<th>#</th>";
@@ -15,7 +16,7 @@ function users_print($esg, $users, $counter = false, $salt = false) {
     echo "<th>sum</th>";
   }
   echo "<th></th>";
-  foreach ($esg["overview"] as $field) {
+  foreach ($esg_globals["overview"] as $field) {
     echo "<th>".$field."</th>";
   }
   ?></tr></thead><tbody><?php
@@ -36,10 +37,13 @@ function users_print($esg, $users, $counter = false, $salt = false) {
     ksort($users);
   }
   $images = [];
-  foreach ($esg["questions"] as $name => $category) {
-    foreach ($category["fields"] as $question) {
-      if ($question[0] == 'image') {
-        array_push($images, $question[1]);
+  foreach ($esg_globals["apptypes"] as $apptype) {
+    $esg = db_getesgfromfile("$apptype.esg");
+    foreach ($esg["questions"] as $name => $category) {
+      foreach ($category["fields"] as $question) {
+        if ($question[0] == 'image') {
+          array_push($images, $question[1]);
+        }
       }
     }
   }
@@ -57,7 +61,7 @@ function users_print($esg, $users, $counter = false, $salt = false) {
       ?><td><?php echo $sum ?></td><?php
     }
     ?><td><a class="btn btn-default" href="user.php?id=<?php echo $id ?>">user</a></td><?php
-    foreach ($esg["overview"] as $field) {
+    foreach ($esg_globals["overview"] as $field) {
       if (in_array($field, $images)) {
         echo sprintf($img, $user[$field]);
       } elseif (gettype($user[$field]) == "integer") {
@@ -91,10 +95,11 @@ function users_print($esg, $users, $counter = false, $salt = false) {
         });
         head.addEventListener("click", function(){
           tbody.innerHTML = "";
-          for (var j = 0; j < newusers.length; j++) {
+          var j;
+          for (j = 0; j < newusers.length; j++) {
             tbody.appendChild(newusers[j])
           }
-          for (var j = 0; j < heads.length; j++) {
+          for (j = 0; j < heads.length; j++) {
             heads[j].style.color='';
           }
           head.style.color='#0080FF';
@@ -136,13 +141,16 @@ function users_print($esg, $users, $counter = false, $salt = false) {
 function user_print($user) {
   $userj = $user;
   $useri = [];
-  $esg = db_getesg();
-  foreach ($esg["questions"] as $name => $category) {
-    foreach ($category["fields"] as $question) {
-      if ($question[0] == 'image') {
-        unset($userj[$question[1]]);
-        if (isset($user[$question[1]])) {
-          $useri[$question[1]]=$user[$question[1]];
+  $esg_globals = db_getglobals();
+  foreach ($esg_globals["apptypes"] as $apptype) {
+    $esg = db_getesgfromfile("$apptype.esg");
+    foreach ($esg["questions"] as $name => $category) {
+      foreach ($category["fields"] as $question) {
+        if ($question[0] == 'image') {
+          unset($userj[$question[1]]);
+          if (isset($user[$question[1]])) {
+            $useri[$question[1]]=$user[$question[1]];
+          }
         }
       }
     }
@@ -159,8 +167,9 @@ function user_print($user) {
     images = JSON.parse(document.getElementById('useri').innerHTML),
     table = document.createElement("table"),
     tbody = document.createElement("tbody"),
-    k,b,v,t;
-  table.classList.add('table','table-striped');
+    t, v, i, k, b,key;
+  table.classList.add('table');
+  table.classList.add('table-striped');
   for (key in images) {
     t = document.createElement('tr'),
     v = document.createElement('td'),

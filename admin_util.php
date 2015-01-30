@@ -10,15 +10,15 @@ if(!function_exists("comm_update_user")){
 function admin_login($server) {
   if (!$server['SSL_CLIENT_S_DN_CN']) {
     ?>Please <a href="<?php
-      echo 'https://' . $server[HTTP_HOST] . ':444' . $server[REQUEST_URI];
+      echo 'https://' . $server['HTTP_HOST'] . ':444' . $server['REQUEST_URI'];
     ?>">log in</a> (MIT Certificates Required)
     </body></html><?php
     exit;
   }
 
-  $esg = db_getesg();
+  $esg_globals = db_getglobals();
   $admin = explode("@", $server['SSL_CLIENT_S_DN_Email']) [0];
-  if (!in_array($admin, $esg["admins"])) {
+  if (!in_array($admin, $esg_globals["admins"])) {
     ?>You are not an administrator and don't have these privileges.
     </body></html><?php
     exit;
@@ -27,7 +27,6 @@ function admin_login($server) {
 }
 
 function admin_post($user, $admin) {
-  $esg = db_getesg();
   $users = db_getusers();
   if ($user) {
     if ((!isset($user["email"]) or $user["email"] == "") and isset($user["kerb"]) and $user["kerb"] != "") {
@@ -39,10 +38,15 @@ function admin_post($user, $admin) {
       </div><?php
       return $users;
     }
+    if (!isset($user["apptype"])){ ?>
+      <div class="alert alert-danger">
+        Please provide an application type.
+      </div><?php
+      return $users;
+    }
     $id = str_replace(['=','+','/'],['','-','_'],base64_encode($user["email"]));
     $user["id"] = $id;
     $user["created"] = time();
-    $user["section"] = (time() < $esg["due"]["summer"]["part_a"]) ? "summer" : "fall";
     if (isset($users[$id])) { ?>
       <div class="alert alert-warning">
         A user with that email already exists: 
@@ -53,12 +57,12 @@ function admin_post($user, $admin) {
       $user["id"] = $id;
       $users[$id] = $user;
       $delta = json_encode($user);
-      db_write($delta, "admin ".$admin, $id, $esg["year"], $user);
+      db_write($delta, "admin ".$admin, $id, $user);
       comm_update_user($user, "add"); ?>
       <div class="alert alert-success">
         The user 
         <a href="user.php?id=<?php echo $id ?>"><?php echo $user["first"]." ".$user["last"] ?></a>
-        has been added<!-- and was sent an email -->!
+        has been added and was sent an email!
       </div>
       <?php
     }
@@ -78,7 +82,8 @@ function changelog_print() {
       table = document.createElement('table'),
       tb = document.createElement('tbody'),
       th = document.createElement('thead');
-  table.classList.add('table','table-hover');
+  table.classList.add('table');
+  table.classList.add('table-hover');
   items = rows[1].split(',');
   for (j=0;j<items.length;j++){
     c = document.createElement('th');

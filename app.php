@@ -6,7 +6,7 @@ function app_print($esgfile=null, $title="ESG Application"){
   }
   // secure connection if no id provided to use kerberos authentication
   if (!isset($_GET["id"]) and !@$_SERVER['SSL_CLIENT_S_DN_CN']) {
-    header('Location: https://'.$_SERVER[HTTP_HOST].':444'.$_SERVER[REQUEST_URI]);
+    header('Location: https://'.$_SERVER['HTTP_HOST'].':444'.$_SERVER['REQUEST_URI']);
   }
   include 'app_util.php';
   if(!function_exists("db_write")){
@@ -34,7 +34,7 @@ function app_print($esgfile=null, $title="ESG Application"){
         p.style.border="1px solid black",
         prev.innerHTML='';
         prev.appendChild(p);
-      }
+      };
       i.src = url;
     }
     function register_image(id, loc){
@@ -55,9 +55,10 @@ function app_print($esgfile=null, $title="ESG Application"){
   $post_response = handle_post($_POST, $_FILES, $_SERVER);
   $user = init_user();
   $esg = db_getesg();
-  
-  if($_GET["tmp"] === "true" && @$server['SSL_CLIENT_S_DN_CN']) {
-    if (in_array(explode("@", $server['SSL_CLIENT_S_DN_Email'])[0], $esg["admins"])) {
+  $esg_globals = db_getglobals();
+
+  if($_GET["tmp"] === "true" && @$_SERVER['SSL_CLIENT_S_DN_CN']) {
+    if (in_array(explode("@", $_SERVER['SSL_CLIENT_S_DN_Email'])[0], $esg_globals["admins"])) {
       $user = ["id" => "example", "first" => "example", "last" => "user", "email" => "example@gmail.com"];
       $esg = db_getesg(file_get_contents("tmp.esg"));
       unlink("tmp.esg");
@@ -68,8 +69,10 @@ function app_print($esgfile=null, $title="ESG Application"){
     echo "<div class='container'>".$esg["apperr"]."</div></body></html>";
     exit;
   }
-  
-  $due = $esg["due"][$user["section"]][((time() < $esg["due"][$user["section"]]["part_a"]) ? "part_a" : "part_b" )];
+  if ($user["apptype"] != $esg["apptype"]) {
+    echo "<div class='container'>".$esg["apptypeerr"]."</div></body></html>";
+    exit;
+  }
   
   ?>
   <script type="application/json" id="user">
@@ -78,8 +81,8 @@ function app_print($esgfile=null, $title="ESG Application"){
   <?php echo $post_response ?>
   <div class="container">
     <div><img src="resources/lizardtessellation.png" width="600"></div>
-      <h1>ESG Application Fall <?php echo $esg["year"]?>
-        (due <?php echo date('M j, Y', $due)?>)</h1>
+      <h1>ESG Application for Fall <?php echo $esg_globals["year"]?>
+        (due <?php echo date('M j, Y', $esg["due"])?>)</h1>
     <p>
     <?php echo $esg["toptext"]?>
     <table class="table" cellspacing="0" cellpadding="4" border="0">
@@ -104,7 +107,7 @@ function app_print($esgfile=null, $title="ESG Application"){
     <h2>Instructions</h2>
     <?php echo $esg["instructions"] ?>
     <p>
-    <b>This application is due no later than <?php echo date('l, F j Y', $due) ?>.</b><br>
+    <b>This application is due no later than <?php echo date('l, F j Y', $esg["due"]) ?>.</b><br>
     If you have any questions or concerns, please contact us at
     <a href="mailto:esglizards@mit.edu">esglizards@mit.edu</a>.
     </p>
@@ -117,7 +120,7 @@ function app_print($esgfile=null, $title="ESG Application"){
       <?php
       if (!isset($user["kerb"])) { ?>
         <div class="form-group">
-          <label>Email: </label>
+          <label for="email">Email: </label>
           <input type="text" name="email">
         </div>
         <hr>
@@ -148,7 +151,7 @@ function app_print($esgfile=null, $title="ESG Application"){
   (function(){
     var userel = document.getElementById('user'),
         user = JSON.parse(document.getElementById('user').innerHTML);
-    for (key in user) {
+    for (var key in user) {
       try {form.elements[key].value=user[key]}
       catch (e) {/* gotta catch 'em all! */}
     }
@@ -163,9 +166,4 @@ function app_print($esgfile=null, $title="ESG Application"){
   </html>
 <?php
 }
-
-if(strpos($_SERVER["SCRIPT_NAME"], 'app.php') !== false){
-  app_print();
-}
-
 ?>
