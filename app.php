@@ -1,4 +1,6 @@
 <?php 
+include 'app_util.php';
+
 function app_print($esgfile=null, $title="ESG Application"){
   global $ESG_FILE;
   if($esgfile != null){
@@ -8,7 +10,6 @@ function app_print($esgfile=null, $title="ESG Application"){
   if (!isset($_GET["id"]) and !@$_SERVER['SSL_CLIENT_S_DN_CN']) {
     header('Location: https://'.$_SERVER['HTTP_HOST'].':444'.$_SERVER['REQUEST_URI']);
   }
-  include 'app_util.php';
   if(!function_exists("db_write")){
     include("db.php");
   }
@@ -166,4 +167,13 @@ function app_print($esgfile=null, $title="ESG Application"){
   </html>
 <?php
 }
+
+if (!debug_backtrace()) { // the request is to this file
+  $user = init_user();
+  if ($user) {
+    $apptype = $user["apptype"];
+    app_print("$apptype.esg");
+  }
+}
+
 ?>
