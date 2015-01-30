@@ -78,6 +78,8 @@ View this code live:
   * Parses user json object into `*.user` file
 - `php.ini`
   * PHP universal dependencies
+- `update_version.py`
+  * Use this utility before you update any `.esg` files, it'll automatically save the old versions and update the version numbers for you.
 - `user.php`
   * Dependencies:
     1. `admin_util.php`
